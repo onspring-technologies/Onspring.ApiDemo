@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Onspring.ApiDemo.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="BaseAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://api.onspring.com/v1</Value>
+    </Setting>
+    <Setting Name="ApiKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">000000ffffff000000ffffff/00000000-ffff-0000-ffff-000000000000</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
