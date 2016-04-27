@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Web;
 using System.Windows.Forms;
 using Onspring.ApiDemo.Properties;
 using Onspring.API.SDK.Enums;
@@ -18,6 +20,11 @@ namespace Onspring.ApiDemo
             InitializeComponent();
             txtBaseAddress.Text = Settings.Default.BaseAddress;
             txtApiKey.Text = Settings.Default.ApiKey;
+        }
+
+        private void AddUrlToResults(string text)
+        {
+            AddLineToResults(text.Replace(txtBaseAddress.Text, ""));
         }
 
         private void AddLineToResults(string text)
@@ -164,7 +171,7 @@ namespace Onspring.ApiDemo
                 var reportId = int.Parse(txtGetReportReportId.Text);
                 var dataType = ParseEnum<ReportDataType>(cbGetReportDataType.Text);
                 var dataFormat = ParseEnum<DataFormat>(cbGetReportDataFormat.Text);
-                AddLineToResults(urlHelper.GetReportDataUri(reportId, dataType, dataFormat).ToString());
+                AddUrlToResults(urlHelper.GetReportDataUri(reportId, dataType, dataFormat).ToString());
                 var helper = CreateHttpHelper();
                 var reportData = helper.GetReportData(reportId, dataType, dataFormat);
                 AddLineToResults(string.Join(", ", reportData.Columns));
@@ -189,7 +196,7 @@ namespace Onspring.ApiDemo
                 int recordId;
                 if (int.TryParse(txtGetRecordRecordId.Text, out recordId))
                 {
-                    AddLineToResults(urlHelper.GetAppRecordUri(appId, recordId, fieldIds, dataFormat).ToString());
+                    AddUrlToResults(urlHelper.GetAppRecordUri(appId, recordId, fieldIds, dataFormat).ToString());
                     var record = helper.GetAppRecord(appId, recordId, fieldIds, dataFormat);
                     AddRecordToResults(record);
                 }
@@ -198,7 +205,7 @@ namespace Onspring.ApiDemo
                     var recordIds = string.IsNullOrWhiteSpace(txtGetRecordRecordId.Text)
                         ? null
                         : txtGetRecordRecordId.Text.Split(',').Select(int.Parse).ToArray();
-                    AddLineToResults(urlHelper.GetAppRecordsUri(appId, txtGetRecordFilter.Text, recordIds, fieldIds, dataFormat).ToString());
+                    AddUrlToResults(urlHelper.GetAppRecordsUri(appId, txtGetRecordFilter.Text, recordIds, fieldIds, dataFormat).ToString());
                     var records = helper.GetAppRecords(appId, txtGetRecordFilter.Text, recordIds, fieldIds, dataFormat);
                     foreach (var record in records)
                     {
@@ -311,8 +318,6 @@ namespace Onspring.ApiDemo
             AddToValueContainerIfApplicable(result, txtAddEditField1, txtAddEditValue1);
             AddToValueContainerIfApplicable(result, txtAddEditField2, txtAddEditValue2);
             AddToValueContainerIfApplicable(result, txtAddEditField3, txtAddEditValue3);
-            AddToValueContainerIfApplicable(result, txtAddEditField4, txtAddEditValue4);
-            AddToValueContainerIfApplicable(result, txtAddEditField5, txtAddEditValue5);
             return result;
         }
 
@@ -327,6 +332,84 @@ namespace Onspring.ApiDemo
         private static T? ParseEnum<T>(string value) where T : struct
         {
             return string.IsNullOrEmpty(value) ? default(T?) : (T?)Enum.Parse(typeof(T), value);
+        }
+
+        private void btnAddFileUsingPath_Click(object sender, EventArgs e)
+        {
+            ProcessRequest(() =>
+            {
+                var urlHelper = new UrlHelper(txtBaseAddress.Text);
+                var appId = int.Parse(txtFileAppId.Text);
+                var recordId = int.Parse(txtFileRecordId.Text);
+                var fieldId = int.Parse(txtFileFieldId.Text);
+                var fileName = Path.GetFileName(txtFilePath.Text);
+                var modifiedTime = File.Exists(txtFilePath.Text) ? File.GetLastWriteTime(txtFilePath.Text) : default(DateTime?);
+                var fileNotes = string.IsNullOrWhiteSpace(txtFileNotes.Text) ? null : txtFileNotes.Text;
+                var url = urlHelper.GetAddFileToRecordUri(appId, recordId, fieldId, fileName, modifiedTime, fileNotes).ToString();
+                AddUrlToResults(string.Format("Using Path: POST {0}", url));
+                var helper = CreateHttpHelper();
+                var result = helper.AddFileToRecord(appId, recordId, fieldId, txtFilePath.Text, txtContentType.Text, fileNotes);
+                AddLineToResults(string.Format("Location: {0}", result.Location));
+                AddLineToResults(string.Format("FileId: {0}", result.CreatedId));
+            });
+        }
+
+        private void btnAddFileUsingStream_Click(object sender, EventArgs e)
+        {
+            ProcessRequest(() =>
+            {
+                if (!File.Exists(txtFilePath.Text))
+                {
+                    throw new ApplicationException(string.Format("File not found: {0}", txtFilePath.Text));
+                }
+                var urlHelper = new UrlHelper(txtBaseAddress.Text);
+                var appId = int.Parse(txtFileAppId.Text);
+                var recordId = int.Parse(txtFileRecordId.Text);
+                var fieldId = int.Parse(txtFileFieldId.Text);
+                var fileName = Path.GetFileName(txtFilePath.Text);
+                var modifiedTime = File.GetLastWriteTime(txtFilePath.Text);
+                var fileNotes = string.IsNullOrWhiteSpace(txtFileNotes.Text) ? null : txtFileNotes.Text;
+                var url = urlHelper.GetAddFileToRecordUri(appId, recordId, fieldId, fileName, modifiedTime, fileNotes).ToString();
+                AddUrlToResults(string.Format("Using Stream: POST {0}", url));
+                var helper = CreateHttpHelper();
+                using (var fileStream = new FileStream(txtFilePath.Text, FileMode.Open, FileAccess.Read))
+                {
+                    var result = helper.AddFileToRecord(appId, recordId, fieldId, fileStream, fileName, txtContentType.Text, modifiedTime, fileNotes);
+                    AddLineToResults(string.Format("Location: {0}", result.Location));
+                    AddLineToResults(string.Format("FileId: {0}", result.CreatedId));
+                }
+            });
+        }
+
+        private void btnSelectFile_Click(object sender, EventArgs e)
+        {
+            var result = dlgSelectFile.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                txtFilePath.Text = dlgSelectFile.FileName;
+                txtContentType.Text = MimeMapping.GetMimeMapping(txtFilePath.Text);
+            }
+        }
+
+        private void btnGetFile_Click(object sender, EventArgs e)
+        {
+            ProcessRequest(() =>
+            {
+                var urlHelper = new UrlHelper(txtBaseAddress.Text);
+                var appId = int.Parse(txtFileAppId.Text);
+                var recordId = int.Parse(txtFileRecordId.Text);
+                var fieldId = int.Parse(txtFileFieldId.Text);
+                var fileId = int.Parse(txtGetFileFileId.Text);
+                var url = urlHelper.GetFileFromRecordUri(appId, recordId, fieldId, fileId).ToString();
+                AddUrlToResults(url);
+                var helper = CreateHttpHelper();
+                using (var result = helper.GetFileFromRecord(appId, recordId, fieldId, fileId))
+                {
+                    AddLineToResults(string.Format("FileName: {0}", result.FileName));
+                    AddLineToResults(string.Format("ContentType: {0}", result.ContentType));
+                    AddLineToResults(string.Format("ContentLength: {0}", result.ContentLength));
+                }
+            });
         }
 
     }

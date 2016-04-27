@@ -94,3 +94,31 @@ The buttons on the main form trigger calls to the Onspring API using the SDK, th
 - Fill in at least one pair of **Field Id** and **Value** fields in the **Field Data** section to the right of the button.  You may find Field Ids using **Get Field List**.
 
 **Results:** The Location header which provides the URL to the record that was added, plus the new RecordId by itself
+
+### Add File Using Path/Add File Using Stream
+
+These buttons use the same input fields, but demonstrate two different methods of adding a file to a record.
+
+**_WARNING: If successful, this will add a file to a record in the Onspring instance to which you are connecting._**
+
+#####Prerequisites:
+- Fill in the **App Id** field to the right of the button.  You may find App Ids using **Get App List**.
+- Fill in the **Record Id** field to the right of the button.  You may find Record Ids using **Get Record(s)**.
+- Fill in the **Field Id** field to the right of the button.  You may find Field Ids using **Get Field List**.
+- Click the **Select File** button and select the file you wish to add.
+
+#####Optionally: 
+- Change the **Content Type** field to the right of the button if necessary.
+- Enter text into the **File Notes** field to the right of the button.
+
+**Results:** The Location header which provides the URL to the file that was added, plus the new FileId by itself
+
+### Get File
+
+#####Prerequisites:
+- Fill in the **App Id** field to the right and above the button.  You may find App Ids using **Get App List**.
+- Fill in the **Record Id** field to the right and above the button.  You may find Record Ids using **Get Record(s)**.
+- Fill in the **Field Id** field to the right and above the button.  You may find Field Ids using **Get Field List**.
+- Fill in the **File Id** field to the right of the button.  You may find File Ids using **Get Record(s)**.
+
+**Results:** The FileName, ContentType, and ContentLength of the file retrieved

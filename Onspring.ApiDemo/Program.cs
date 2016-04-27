@@ -1,14 +1,4 @@
-﻿#region Copyright
-// /* 
-//  * Onspring Platform
-//  * Copyright (c) 2010, 2015 Onspring Technologies, LLC. All Rights Reserved.
-//  * 
-//  * <<FULL COPYRIGHT PENDING>>
-//  *  
-// */
-#endregion
-
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace Onspring.ApiDemo
