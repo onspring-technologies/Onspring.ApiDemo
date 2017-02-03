@@ -4,7 +4,7 @@ Onspring.ApiDemo is a sample WinForms application that can be used to try out th
 
 ## Prerequisites
 
-- .NET 4.5 or later
+- .NET 4.6.1 or later
 - Visual Studio 2012 or later (for C# 5)
 
 ## Getting Started
