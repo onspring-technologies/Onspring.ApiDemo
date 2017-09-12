@@ -56,9 +56,8 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Onspring.API.SDK, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Onspring.API.SDK.2.0.0\lib\net461\Onspring.API.SDK.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Onspring.API.SDK, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Onspring.API.SDK.2.1.0\lib\net461\Onspring.API.SDK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
