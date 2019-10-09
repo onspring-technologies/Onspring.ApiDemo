@@ -60,7 +60,7 @@ The buttons on the main form trigger calls to the Onspring API using the SDK, th
 ##### Optionally: 
 - Enter one or more (comma-separated) record ids in the **Record Id(s)** field to the right of the button.
 - Enter one or more (comma-separated) field ids in the **Field Ids** field to the right of the button.
-- Enter a **Filter** expression (if **Record Id(s)** is empty or has more than one value).  See the [Full API Documentation](https://goo.gl/vgyHm2) for details.
+- Enter a **Filter** expression (if **Record Id(s)** is empty or has more than one value).  See the [Full API Documentation](https://ss-usa.s3.amazonaws.com/c/308463180/media/99045cf01cc2f0ad1795036815/Admin%20Guide%20-%20API%20-%20Onspring.pdf) for details.
 - Select a Data Format from the combobox to the right of the button.
 
 **Results:** Selected information for each record
